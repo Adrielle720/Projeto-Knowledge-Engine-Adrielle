@@ -1,0 +1,199 @@
+
+Lógica e Matemática Discreta - 2026/1
+Projeto - Knowledge Engine
+Projeto: Knowledge Engine
+Vamos construir um mecanismo de busca utilizando Lógica de Primeira Ordem. Esse sistema remete aos
+primórdios da IA, que utilizava inferência lógica para responder perguntas em uma grande base de conhecimento.
+O projeto consiste em montar uma base de conhecimento usando um dataset público e realizar perguntas.
+O objetivo do projeto é trabalhar predicados e sentenças de forma prática, expandindo o ferramental para um
+novo paradigma de programação.
+Antes de explicar os requisitos, um pequeno tutorial de Prolog.
+O Dataset Exemplo
+Vamos selecionar os jogos do Campeonato Brasileiro de Futebol de 2023. O dataset original pode ser encontrado
+em: https://github.com/adaoduque/Brasileirao_Dataset
+O primeiro passo é abrir e explorar o dataset, conforme vocês já fizeram em CDados e filtrar apenas os jogos
+de 2023.
+Uma vez selecionados os registros, vamos montar a base de conhecimento em um formato Prolog. O arquivo já
+montado está disponível no Blackboard.
+Prolog é uma linguagem de programação de paradigma lógico.
+Lembrem-se que uma base é formada por declaração de hipóteses no formato de predicados. Podemos montá-la
+da seguinte forma:
+j o g o ( p a l m e i r a s , cuiaba , 2 , 1 , data ( 2 0 2 3 , 0 4 , 1 5 ) , a l l i a n z _ p a r q u e ) .
+j o g o ( america−mg, f l u m i n e n s e , 0 , 3 , data ( 2 0 2 3 , 0 4 , 1 5 ) , estádio_raimundo_sampaio ) .
+j o g o ( b r a g a n t i n o , bahia , 2 , 1 , data ( 2 0 2 3 , 0 4 , 1 5 ) , n a b i z ã o ) .
+j o g o ( a t h l e t i c o −pr , g o i a s , 2 , 0 , data ( 2 0 2 3 , 0 4 , 1 5 ) , l i g g a _ a r e n a ) .
+j o g o ( f o r t a l e z a , i n t e r n a c i o n a l , 1 , 1 , data ( 2 0 2 3 , 0 4 , 1 5 ) , a r e n a _ c a s t e l ã o ) .
+. . .
+j o g o ( bahia , a t l e t i c o −mg, 4 , 1 , data ( 2 0 2 3 , 1 2 , 0 6 ) , itaipava_arena_fonte_nova ) .
+j o g o ( cuiaba , a t h l e t i c o −pr , 3 , 0 , data ( 2 0 2 3 , 1 2 , 0 6 ) , arena_pantanal ) .
+j o g o ( s a n t o s , f o r t a l e z a , 1 , 2 , data ( 2 0 2 3 , 1 2 , 0 6 ) , e s t á d i o _ u r b a n o _ c a l d e i r a ) .
+j o g o ( sao_paulo , flamengo , 1 , 0 , data ( 2 0 2 3 , 1 2 , 0 6 ) , morumbi ) .
+j o g o ( vasco , b r a g a n t i n o , 2 , 1 , data ( 2 0 2 3 , 1 2 , 0 6 ) , e s t á d i o _ s ã o _ j a n u á r i o ) .
+Onde: jogo é um predicado formado por 6 variáveis: mandante, visitante, gols mandante, gols visitante, data
+da partida e local da partida.
+Alguns pontos importantes:
+• Em Prolog, os predicados e constantes são escritos em minúsculo e sem espaços. Se possível sem acentos
+• A data usa essa construção: data(ano, mês, dia)
+• O ponto final não é opcional! ele encerra a cláusula
+Se tudo der certo, ao todo serão extraídos 380 predicados do campeonato de 2023 (cada um dos 20 participantes
+jogam 19 jogos como mandante).
+Brincando com a base
+Com a base pronta, é possível fazer algumas consultas bem simples. Você pode usar um compilador Prolog
+online (https://swish.swi-prolog.org/) para testar.
+Raul Ikeda - rauligs@insper.edu.br 1
+Na plataforma você pode criar um notebook, semelhante ao Jupyter. A partir daqui, basta adicionar células na
+ordem desejada. O mais importante é diferenciar a área Program da área Query.
+Toda a sua base de predicados e setenças vai em Program e as perguntas vão em Query.
+Adicionando uma célula de cada e preenchendo os jogos na área Program, vamos montar a primeira query:
+?− j o g o ( cuiaba , _, _, _, _, _)
+true
+Vamos com calma:
+• jogo é um predicado com aridade 6.
+• Ao escrever cuiaba estamos igualando o primeiro campo ao valor “cuiaba” (letras minúsculas são con-
+stantes).
+• _ significa que a variável livre não será usada.
+• na verdade, o resultado da query é um conjunto de 19 valores true - que representam todos os predicados
+cujo mandante seja o “cuiaba”
+Vamos tentar agora:
+?− j o g o ( cuiaba , A d v e r s a r i o , _, _, _, _)
+A d v e r s a r i o = b r a g a n t i n o
+A d v e r s a r i o = gremio
+. . .
+A d v e r s a r i o = a t h l e t i c o −pr
+Agora mudou um pouco:
+• O resultado da query é listar todos os adversários visitantes, cujo o mandante é o “cuiaba”.
+• Adversario é uma variável livre. o Prolog procura todas as substituições para Adversario que tornam o
+objetivo verdadeiro.
+• Tudo que começa com letra maiúscula é uma variável.
+Diferentemente da programação procedural (ex: Python), não há exatamente uma função com return, mas uma
+espécie de pattern matching com as especificações passadas como argumento.
+Seria “equivalente” a uma função:
+# I s s o s e r i a próximo , em P r o l o g A d v e r s a r i o não é uma l i s t a
+def c o n s u l t a _ j o g o ( time , A d v e r s a r i o ) :
+for j o g o in j o g o s :
+i f j o g o . mandante = time :
+A d v e r s a r i o . append ( j o g o . v i s i t a n t e )
+Agora podemos começar a fazer perguntas com mais contexto:
+“Quando o Palmeiras jogou com o Corinthians?”
+?− j o g o ( p a l m e i r a s , c o r i n t h i a n s , _, _, Data , L o c a l )
+Data = data ( 2 0 2 3 , 4 , 2 9 ) ,
+L o c a l = a l l i a n z _ p a r q u e
+?− j o g o ( c o r i n t h i a n s , p a l m e i r a s , _, _, Data , L o c a l )
+Data = data ( 2 0 2 3 , 9 , 3 ) ,
+L o c a l = neo_química_arena
+Onde , é o operador ∧.
+Exercício Você conseguiria fazer uma query para listar todos os jogos do Maracanã?
+Novas Sentenças
+O último exemplo pode ser reescrito através de duas sentenças:
+c o n f r o n t o (TimeA , TimeB , Data , L o c a l ) :−
+j o g o (TimeA , TimeB , _, _, Data , L o c a l ) ;
+j o g o ( TimeB , TimeA , _, _, Data , L o c a l ) .
+2
+Onde: :− define uma sentença e ; é o operador ∨.
+Obs: Existe o ¬, mas ele tem um significado um pouco diferente. True significa que o predicado foi realmente
+afirmado e False significa a falha em provar o predicado com a base atual (isso não significa que o predicado é
+falso)!
+E qual pergunta agora você gostaria de fazer para a base?
+Funções?
+Em Prolog, podemos fazer sentenças que relacionam uma variável a um número:
+empate (Time) :−
+j o g o (Time, _, G, G, _, _) ;
+j o g o (_, Time, G, G, _, _) .
+pontos_empate (Time, 1 ) :−
+empate (Time ) .
+Toda variável passada como segundo argumento de pontos_time, receberá o valor 1.
+Na sentença empate, ao usar a mesma variável G em dois argumentos, ele naturalmente iguala as duas, filtrando
+apenas os predicados em que a quantidade de gols for igual.
+E ao perguntar:
+?− pontos_empate ( b r a g a n t i n o , P)
+P = 1
+P = 1
+P = 1
+P = 1
+P = 1
+P = 1
+P = 1
+P = 1
+P = 1
+P = 1
+P = 1
+Isso significa que ele deu match em 11 jogos em que o Bragantino empatou. Como a variável P foi passada
+como argumento, ela retorna preenchida com o resultado declarado na sentença pontos_empate.
+E se quiséssemos somar esses pontos? Vamos usar a função findall para montar uma lista e a função sum_list
+para somar os elementos. Novamente, não há return ou atribuição, tudo é passado como argumento.
+time (Time) :−
+j o g o (Time, _, _, _, _, _) ;
+j o g o (_, Time, _, _, _, _) .
+total_pontos_empate (Time, Total ) :−
+time (Time) ,
+f i n d a l l (P , pontos_empate (Time, P) , L i s t a ) ,
+s u m _ l i s t ( L i s t a , T otal ) .
+?− total_pontos_empate ( b r a g a n t i n o , Total )
+Total = 11
+?− total_pontos_empate (Time, Total )
+Time = p a l m e i r a s ,
+Total = 10
+Time = america−mg,
+Total = 9
+Time = b r a g a n t i n o ,
+Total = 11
+. . .
+3
+O uso do predicado time é para não deixar a variável Time livre na função findall . O que faria com que os
+pontos de todos os times fossem somados - equivalente a fazer um group by sem uma chave de agregação.
+Exercício: você consegue fazer uma função que retorna 3 pontos para vitória (como mandante e
+como visitante)? Dica: Você deve utilizar duas variáveis diferentes para a quantidade de gols e
+compará-las para filtrar a vitória.
+Ultimate Query
+Agora de posse das funções que calculam os pontos de empate e vitória, vamos calcular o total de pontos de
+cada time:
+t o t a l _ p o n t o s (Time, Total ) :−
+total_pontos_empate (Time, TE) ,
+t o t a l _ p o n t o s _ v i t o r i a (Time, TV) ,
+Tot a l i s TE + TV.
+?− t o t a l _ p o n t o s ( b r a g a n t i n o , Total )
+Total = 62
+O exemplo mostra que também é possível realizar aritmética.
+E para finalizar, a tabela do campeonato:
+c l a s s i f i c a c a o ( Tabela ) :−
+s e t o f ( Total−Time , t o t a l _ p o n t o s ( Time , Total ) , ListaOrd ) ,
+r e v e r s e ( ListaOrd , Tabela ) .
+?− c l a s s i f i c a c a o ( Tabela )
+Tabela = [70 − p a l m e i r a s , 68−gremio , 66−( a t l e t i c o −mg) , 66−flamengo , 64−( b o t a f o g o −r j ) ,
+62− b r a g a n t i n o , 56−( a t h l e t i c o −pr ) , 56− f l u m i n e n s e , 55− i n t e r n a c i o n a l , 54− f o r t a l e z a ,
+53−sao_paulo , 51−cuiaba , 50− c o r i n t h i a n s , 47− c r u z e i r o , 45−vasco ,
+44−bahia , 43− s a n t o s , 38− g o i a s , 30− c o r i t i b a , 24−( america−mg ) ]
+Onde setof monta um conjunto, remove os duplicados e ordena de forma crescente os elementos. reverse vai
+inverter para mostrar os maiores pontuadores.
+Agora é com vocês!
+O Projeto
+Você deve procurar um dataset de interesse. Restrinja à apenas uma tabela-fonte do dataset original e selecione
+entre 6 a 10 campos, mesclando variáveis qualitativas e quantitativas. Uma boa fonte de procura é o Kaggle.
+Em seguida, deve fazer um script em Python para gerar a base de conhecimento e as perguntas no formato de
+Prolog.
+Após essa fase, você deve formular pelo menos 3 perguntas para o dataset. Essas perguntas precisam ser
+respondidas com queries em Prolog.
+Requisitos do Projeto:
+• Individual (datasets não podem ser compartilhados - e nem usar o mesmo do tutorial).
+• Data da Entrega: 3/Maio às 23h59 (esse prazo é improrrogável). Após o prazo, a nota de projeto será
+desconsiderada.
+• A entrega deve ser feita em um repositório GitHub. Você deve entregar o endereço do repositório no
+Blackboard.
+• Não serão aceitas implementações em outras linguagens além do ETL em Python e as queries em Prolog.
+Rubrica:
+• I: Não houve entrega, ou há apenas pedaços esparsos de código.
+• D: A base de conhecimento foi montada mas não há 3 perguntas implementadas.
+• C: Foram feitas 3 perguntas básicas, que poderiam ser respondidas com sentenças simples e diretas.
+• B: Há pelo menos 1 pergunta mais sofisticada (envolvendo algum agrupamento ou técnica avançada).
+• A: Todas as perguntas são sofisticadas.
+4
+pergunta básica = filtro direto; pergunta sofisticada = agregação, comparação, ordenação, composição de regras
+ou uso de predicados auxiliares.
+O Repositório precisa ter um README explicando todos os passos da construção do projeto e como rodá-lo.
+A ausência do README implicará na perda de 1 conceito na nota.
+Erros comuns em Prolog:
+• Maiúscula vs Minúscula
+• Esquecer do ponto final
+• Fazer query em Program
+• findall com variáveis livres
+5
